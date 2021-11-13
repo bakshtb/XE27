@@ -6,9 +6,9 @@
 import socket
 import protocol
 
-
 IP = "127.0.0.1"
-SAVED_PHOTO_LOCATION = r"C:\client_screen.jpg" # The path + filename where the copy of the screenshot at the client should be saved
+SAVED_PHOTO_LOCATION = r"C:\client_screen.jpg"  # The path + filename where the copy of the screenshot at the client should be saved
+
 
 def handle_server_response(my_socket, cmd):
     """
@@ -16,15 +16,18 @@ def handle_server_response(my_socket, cmd):
     For example, DIR should result in printing the contents to the screen,
     Note- special attention should be given to SEND_PHOTO as it requires and extra receive
     """
-    # (8) treat all responses except SEND_PHOTO
     valid_msg, res = protocol.get_msg(my_socket)
     #  If server's response is valid, print it
     if valid_msg:
-        print("Server respond:", res)
+        if cmd != 'SEND_PHOTO':
+            print("Server respond:", res)
+        else:
+            img_size = int(res)
+            with open(SAVED_PHOTO_LOCATION, 'wb+') as pic:
+                strng = my_socket.recv(img_size)
+                pic.write(strng)
     else:
         print("Response not valid\n")
-
-    # (10) treat SEND_PHOTO
 
 
 def main():
@@ -41,7 +44,7 @@ def main():
         cmd = input("Please enter command:\n")
         if protocol.check_cmd(cmd):
             packet = protocol.create_msg(cmd)
-            my_socket.send(packet)
+            my_socket.send(packet.encode())
             handle_server_response(my_socket, cmd)
             if cmd == 'EXIT':
                 break
@@ -49,6 +52,7 @@ def main():
             print("Not a valid command, or missing parameters\n")
 
     my_socket.close()
+
 
 if __name__ == '__main__':
     main()

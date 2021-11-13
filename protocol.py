@@ -11,11 +11,12 @@ def check_cmd(data):
     For example, DELETE c:\work\file.txt is good, but DELETE alone is not
     """
     data_words = data.split()
-    if data_words[0] in ['PHOTO_SEND', 'EXIT']:
+    if data_words[0] in ['TAKE_SCREENSHOT', 'SEND_PHOTO', 'EXIT']:
         if len(data_words) == 1:
             return True
     elif data_words[0] in ['DIR', 'DELETE', 'EXECUTE']:
-        if len(data_words) == 2:
+        # if the cmd is "DIR C:\New folder" data_words = 2
+        if len(data_words) >= 2:
             return True
     elif data_words[0] in ['COPY']:
         if len(data_words) == 3:
@@ -44,4 +45,4 @@ def get_msg(my_socket):
         return True, message
 
     except Exception as ex1:
-        return False, "Error"
+        return False, "get_msg Error"
