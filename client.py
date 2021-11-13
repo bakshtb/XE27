@@ -24,8 +24,8 @@ def handle_server_response(my_socket, cmd):
         else:
             img_size = int(res)
             with open(SAVED_PHOTO_LOCATION, 'wb+') as pic:
-                strng = my_socket.recv(img_size)
-                pic.write(strng)
+                img_bytes = my_socket.recv(img_size)
+                pic.write(img_bytes)
     else:
         print("Response not valid\n")
 
